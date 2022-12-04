@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -29,18 +28,4 @@ func createWord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write([]byte("Hello from create word"))
-}
-
-func main() {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/words", showAllWords)
-	mux.HandleFunc("/word/create", createWord)
-	mux.HandleFunc("/word/view?{id}", showWord)
-
-	log.Print("Server Starting...")
-	err := http.ListenAndServe(":4000", mux)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
