@@ -26,16 +26,10 @@ func main() {
 		infoLog: infoLog,
 	}
 
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/words", app.showAllWords)
-	mux.HandleFunc("/word/create", app.createWord)
-	mux.HandleFunc("/word/view", app.showWord)
-
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errLog,
-		Handler:  mux,
+		Handler:  app.routes(),
 	}
 
 	infoLog.Print("Server Starting...", *addr)
