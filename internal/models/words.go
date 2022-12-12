@@ -3,12 +3,14 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"time"
 )
 
-type Words struct {
+type Word struct {
 	ID          int
 	word        string
 	description string
+	created     time.Time
 }
 
 type WordModel struct {
@@ -30,14 +32,14 @@ func (m *WordModel) Insert(word string, description string) (int, error) {
 
 }
 
-func (m *WordModel) Get(id int) (*Words, error) {
-	stmt := `SELECT id,word,description FROM words
+func (m *WordModel) Get(id int) (*Word, error) {
+	stmt := `SELECT id,word, description, created FROM words
 	WHERE id=?`
 
 	row := m.DB.QueryRow(stmt, id)
-	w := &Words{}
+	w := &Word{}
 
-	err := row.Scan(&w.ID, &w.word, &w.description)
+	err := row.Scan(&w.ID, &w.word, &w.description, &w.created)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
