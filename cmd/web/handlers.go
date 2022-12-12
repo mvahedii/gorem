@@ -28,7 +28,7 @@ func (app *application) showWord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "%v", word)
+	fmt.Fprintf(w, "%+v", word)
 }
 
 func (app *application) createWord(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +46,4 @@ func (app *application) createWord(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.errLog.Fatal()
 	}
-
-	w.Write([]byte("Hello from create word"))
 }
