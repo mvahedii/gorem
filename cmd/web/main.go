@@ -8,11 +8,13 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/mvahedii/gorem/internal/models"
 )
 
 type application struct {
 	errLog  *log.Logger
 	infoLog *log.Logger
+	words   *models.WordModel
 }
 
 func main() {
@@ -36,6 +38,7 @@ func main() {
 	app := &application{
 		errLog:  errLog,
 		infoLog: infoLog,
+		words:   &models.WordModel{DB: db},
 	}
 
 	srv := &http.Server{

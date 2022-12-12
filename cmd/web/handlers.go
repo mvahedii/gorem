@@ -1,14 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
-)
 
-func (app *application) showAllWords(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello from show all words"))
-}
+	"github.com/mvahedii/gorem/internal/models"
+)
 
 func (app *application) showWord(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -18,7 +17,18 @@ func (app *application) showWord(w http.ResponseWriter, r *http.Request) {
 		app.errLog.Println(err)
 		return
 	}
-	fmt.Fprintf(w, "the id is %d", id)
+
+	word, err := app.words.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	fmt.Fprintf(w, "%v", word)
 }
 
 func (app *application) createWord(w http.ResponseWriter, r *http.Request) {
@@ -28,5 +38,14 @@ func (app *application) createWord(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
+
+	word := "dummy"
+	description := "a model or replica of a human being."
+
+	_, err := app.words.Insert(word, description)
+	if err != nil {
+		app.errLog.Fatal()
+	}
+
 	w.Write([]byte("Hello from create word"))
 }
