@@ -1,6 +1,7 @@
 package main
 
 import (
+	// "encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -27,7 +28,6 @@ func (app *application) showWord(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
 	fmt.Fprintf(w, "%+v", word)
 }
 

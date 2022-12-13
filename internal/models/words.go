@@ -8,9 +8,9 @@ import (
 
 type Word struct {
 	ID          int
-	word        string
-	description string
-	created     time.Time
+	Word        string
+	Description string
+	Created     time.Time
 }
 
 type WordModel struct {
@@ -39,7 +39,7 @@ func (m *WordModel) Get(id int) (*Word, error) {
 	row := m.DB.QueryRow(stmt, id)
 	w := &Word{}
 
-	err := row.Scan(&w.ID, &w.word, &w.description, &w.created)
+	err := row.Scan(&w.ID, &w.Word, &w.Description, &w.Created)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -48,6 +48,5 @@ func (m *WordModel) Get(id int) (*Word, error) {
 			return nil, err
 		}
 	}
-
 	return w, nil
 }
