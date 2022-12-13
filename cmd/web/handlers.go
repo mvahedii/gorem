@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -39,10 +38,15 @@ func (app *application) createWord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	word := "dummy"
-	description := "a model or replica of a human being."
-
-	_, err := app.words.Insert(word, description)
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	word := r.PostForm.Get("word")
+	description := r.PostForm.Get("description")
+	fmt.Println(word, description)
+	_, err = app.words.Insert(word, description)
 	if err != nil {
 		app.errLog.Fatal()
 	}
