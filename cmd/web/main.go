@@ -3,19 +3,11 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"log"
-	"net/http"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/mvahedii/gorem/internal/models"
+	"github.com/mvahedii/gorem/internal/handlers"
+	"github.com/mvahedii/gorem/internal/utils"
 )
-
-type application struct {
-	errLog  *log.Logger
-	infoLog *log.Logger
-	words   *models.WordModel
-}
 
 func main() {
 
@@ -25,32 +17,19 @@ func main() {
 
 	flag.Parse()
 
-	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	errLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
-
 	db, err := openDB(*dsn)
 	if err != nil {
-		errLog.Fatal(err)
+		utils.ErrLog.Fatal(err)
 	}
 
 	defer db.Close()
 
-	app := &application{
-		errLog:  errLog,
-		infoLog: infoLog,
-		words:   &models.WordModel{DB: db},
-	}
+	srv := handlers.NewHTTPServer(db, addr)
 
-	srv := &http.Server{
-		Addr:     *addr,
-		ErrorLog: errLog,
-		Handler:  app.routes(),
-	}
-
-	infoLog.Print("Server Starting...", *addr)
+	utils.InfoLog.Print("Server Starting...", *addr)
 	err = srv.ListenAndServe()
 	if err != nil {
-		errLog.Fatal(err)
+		utils.ErrLog.Fatal(err)
 	}
 }
 
