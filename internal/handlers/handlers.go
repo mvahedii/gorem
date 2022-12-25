@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/mvahedii/gorem/internal/repositories"
+	"github.com/mvahedii/gorem/internal/services"
 	"github.com/mvahedii/gorem/internal/utils"
 )
 
@@ -15,11 +16,11 @@ func (httpServer *HTTPServer) showWord(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil || id < 1 {
 		utils.NotFound(w)
-		httpServer.errLog.Println(err)
+		httpServer.ErrLog.Println(err)
 		return
 	}
 
-	word, err := httpServer.words.Get(id)
+	word, err := services.ShowWordService(id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrNoRecord) {
 			utils.NotFound(w)
@@ -47,8 +48,8 @@ func (httpServer *HTTPServer) createWord(w http.ResponseWriter, r *http.Request)
 	word := r.PostForm.Get("word")
 	description := r.PostForm.Get("description")
 	fmt.Println(word, description)
-	_, err = httpServer.words.Insert(word, description)
+	_, err = services.CreateWordService(word, description)
 	if err != nil {
-		httpServer.errLog.Fatal()
+		httpServer.ErrLog.Fatal()
 	}
 }

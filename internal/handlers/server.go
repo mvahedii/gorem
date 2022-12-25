@@ -10,17 +10,17 @@ import (
 )
 
 type HTTPServer struct {
-	errLog  *log.Logger
-	infoLog *log.Logger
-	words   *repositories.WordModel
+	ErrLog  *log.Logger
+	InfoLog *log.Logger
+	Words   *repositories.WordModel
 }
 
 func NewHTTPServer(db *sql.DB, addr *string) *http.Server {
 
 	httpServer := &HTTPServer{
-		errLog:  utils.ErrLog,
-		infoLog: utils.InfoLog,
-		words:   &repositories.WordModel{DB: db},
+		ErrLog:  utils.ErrLog,
+		InfoLog: utils.InfoLog,
+		Words:   &repositories.WordModel{DB: db},
 	}
 	srv := &http.Server{
 		Addr:     *addr,
