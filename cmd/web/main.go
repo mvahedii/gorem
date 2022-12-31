@@ -6,6 +6,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mvahedii/gorem/internal/handlers"
+	"github.com/mvahedii/gorem/internal/repositories"
+	v1 "github.com/mvahedii/gorem/internal/services/v1"
 	"github.com/mvahedii/gorem/internal/utils"
 )
 
@@ -24,7 +26,11 @@ func main() {
 
 	defer db.Close()
 
-	srv := handlers.NewHTTPServer(db, addr)
+	wordRepository := repositories.NewWordRepository(db)
+	wordService := v1.NewWordService(wordRepository)
+	wordHandler := handlers.NewWordHandler(wordService)
+
+	srv := handlers.NewHTTPServer(*wordHandler, addr)
 
 	utils.InfoLog.Print("Server Starting...", *addr)
 	err = srv.ListenAndServe()

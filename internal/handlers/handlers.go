@@ -3,24 +3,35 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/mvahedii/gorem/internal/repositories"
-	"github.com/mvahedii/gorem/internal/services"
+	services "github.com/mvahedii/gorem/internal/services"
 	"github.com/mvahedii/gorem/internal/utils"
 )
 
-func (httpServer *HTTPServer) showWord(w http.ResponseWriter, r *http.Request) {
+type wordHandler struct {
+	wordService services.WordsService
+}
+
+func NewWordHandler(wordService services.WordsService) *wordHandler {
+	return &wordHandler{
+		wordService: wordService,
+	}
+}
+
+func (wordHandler *wordHandler) showWord(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil || id < 1 {
 		utils.NotFound(w)
-		httpServer.ErrLog.Println(err)
+		// httpServer.ErrLog.Println(err)
 		return
 	}
 
-	word, err := services.ShowWordService(id)
+	word, err := wordHandler.wordService.GetWord(id)
 	if err != nil {
 		if errors.Is(err, repositories.ErrNoRecord) {
 			utils.NotFound(w)
@@ -32,7 +43,7 @@ func (httpServer *HTTPServer) showWord(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%+v", word)
 }
 
-func (httpServer *HTTPServer) createWord(w http.ResponseWriter, r *http.Request) {
+func (wordHandler *wordHandler) createWord(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "POST" {
 		w.Header().Set("Allow", http.MethodPost)
@@ -48,8 +59,8 @@ func (httpServer *HTTPServer) createWord(w http.ResponseWriter, r *http.Request)
 	word := r.PostForm.Get("word")
 	description := r.PostForm.Get("description")
 	fmt.Println(word, description)
-	_, err = services.CreateWordService(word, description)
+	_, err = wordHandler.wordService.CreateWord(word, description)
 	if err != nil {
-		httpServer.ErrLog.Fatal()
+		log.Fatal()
 	}
 }

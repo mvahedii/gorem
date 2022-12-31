@@ -13,22 +13,35 @@ type Word struct {
 	Created     time.Time
 }
 
+type WordRepository interface {
+	Insert(title, description string) (int, error)
+	Get(id int) (*Word, error)
+}
+
 type WordModel struct {
 	DB *sql.DB
 }
 
-func (m *WordModel) Insert(word string, description string) (int, error) {
+func NewWordRepository(db *sql.DB) WordRepository {
+	return &WordModel{
+		DB: db,
+	}
+}
+
+func (m *WordModel) Insert(title string, description string) (int, error) {
 
 	stmt := `INSERT INTO words (word,description,created) 
 	VALUES (?,?,UTC_TIMESTAMP())`
 
-	_, err := m.DB.Exec(stmt, word, description)
+	res, err := m.DB.Exec(stmt, title, description)
 
 	if err != nil {
 		return 0, err
 	}
 
-	return 1, nil
+	id, err := res.LastInsertId()
+
+	return int(id), nil
 
 }
 
