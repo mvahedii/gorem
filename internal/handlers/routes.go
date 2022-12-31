@@ -4,11 +4,11 @@ import (
 	"net/http"
 )
 
-func (server *HTTPServer) routes() *http.ServeMux {
+func (server *HTTPServer) routes(wordHandler wordHandler) *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/word/create", server.createWord)
-	mux.HandleFunc("/word/view", server.showWord)
+	mux.HandleFunc("/word/create", wordHandler.createWord)
+	mux.HandleFunc("/word/view", wordHandler.showWord)
 
 	return mux
 }
