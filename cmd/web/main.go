@@ -6,9 +6,11 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mvahedii/gorem/internal/handlers"
-	database "github.com/mvahedii/gorem/internal/repositories/database"
+	"github.com/mvahedii/gorem/internal/repositories/database"
 	v1 "github.com/mvahedii/gorem/internal/services/v1"
 	"github.com/mvahedii/gorem/internal/utils"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -19,12 +21,13 @@ func main() {
 
 	flag.Parse()
 
-	db, err := openDB(*dsn)
+	db, err := gorm.Open(mysql.Open(*dsn), &gorm.Config{})
+
 	if err != nil {
 		utils.ErrLog.Fatal(err)
 	}
 
-	defer db.Close()
+	// defer db.Close()
 
 	wordRepository := database.NewWordRepository(db)
 	wordService := v1.NewWordService(wordRepository)

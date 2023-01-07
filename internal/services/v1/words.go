@@ -23,10 +23,10 @@ func (wordsService *WordsService) GetWord(id int) (*database.Word, error) {
 	return word, nil
 }
 
-func (wordsService *WordsService) CreateWord(title, description string) (int, error) {
-	res, err := wordsService.wordRepository.Insert(title, description)
+func (wordsService *WordsService) CreateWord(title, description string) error {
+	err := wordsService.wordRepository.Insert(title, description)
 	if err != nil {
-		return 0, err
+		return err
 	}
-	return res, nil
+	return nil
 }

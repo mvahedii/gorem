@@ -59,8 +59,8 @@ func (wordHandler *wordHandler) createWord(w http.ResponseWriter, r *http.Reques
 	word := r.PostForm.Get("word")
 	description := r.PostForm.Get("description")
 	fmt.Println(word, description)
-	_, err = wordHandler.wordService.CreateWord(word, description)
+	err = wordHandler.wordService.CreateWord(word, description)
 	if err != nil {
-		log.Fatal()
+		log.Panic()
 	}
 }

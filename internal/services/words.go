@@ -5,6 +5,6 @@ import (
 )
 
 type WordsService interface {
-	CreateWord(title, description string) (int, error)
+	CreateWord(title, description string) error
 	GetWord(id int) (*database.Word, error)
 }

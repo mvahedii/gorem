@@ -4,9 +4,12 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Word struct {
+	Model       gorm.Model
 	ID          int
 	Word        string
 	Description string
@@ -14,45 +17,43 @@ type Word struct {
 }
 
 type WordRepository interface {
-	Insert(title, description string) (int, error)
+	Insert(title, description string) error
 	Get(id int) (*Word, error)
 }
 
 type WordModel struct {
-	DB *sql.DB
+	DB *gorm.DB
 }
 
-func NewWordRepository(db *sql.DB) WordRepository {
+func NewWordRepository(db *gorm.DB) WordRepository {
 	return &WordModel{
 		DB: db,
 	}
 }
 
-func (m *WordModel) Insert(title string, description string) (int, error) {
+func (m *WordModel) Insert(title string, description string) (err error) {
 
-	stmt := `INSERT INTO words (word,description,created) 
-	VALUES (?,?,UTC_TIMESTAMP())`
-
-	res, err := m.DB.Exec(stmt, title, description)
-
-	if err != nil {
-		return 0, err
+	word := Word{
+		Model:       gorm.Model{},
+		Word:        title,
+		Description: description,
 	}
 
-	id, err := res.LastInsertId()
+	err = m.DB.Create(&word).Error
 
-	return int(id), nil
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }
 
 func (m *WordModel) Get(id int) (*Word, error) {
-	stmt := `SELECT id,word, description, created FROM words
-	WHERE id=?`
 
-	row := m.DB.QueryRow(stmt, id)
 	w := &Word{}
-
-	err := row.Scan(&w.ID, &w.Word, &w.Description, &w.Created)
+	row := m.DB.First(w, id)
+	err := row.Row().Scan(&w.ID, &w.Word, &w.Description, &w.Created)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
