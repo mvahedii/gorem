@@ -1,21 +1,21 @@
 package v1
 
 import (
-	"github.com/mvahedii/gorem/internal/repositories"
+	"github.com/mvahedii/gorem/internal/repositories/database"
 	"github.com/mvahedii/gorem/internal/services"
 )
 
 type WordsService struct {
-	wordRepository repositories.WordRepository
+	wordRepository database.WordRepository
 }
 
-func NewWordService(wordRepository repositories.WordRepository) services.WordsService {
+func NewWordService(wordRepository database.WordRepository) services.WordsService {
 	return &WordsService{
 		wordRepository: wordRepository,
 	}
 }
 
-func (wordsService *WordsService) GetWord(id int) (*repositories.Word, error) {
+func (wordsService *WordsService) GetWord(id int) (*database.Word, error) {
 	word, err := wordsService.wordRepository.Get(id)
 	if err != nil {
 		return nil, err
