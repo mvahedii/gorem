@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mvahedii/gorem/internal/handlers"
-	"github.com/mvahedii/gorem/internal/repositories"
+	database "github.com/mvahedii/gorem/internal/repositories/database"
 	v1 "github.com/mvahedii/gorem/internal/services/v1"
 	"github.com/mvahedii/gorem/internal/utils"
 )
@@ -26,7 +26,7 @@ func main() {
 
 	defer db.Close()
 
-	wordRepository := repositories.NewWordRepository(db)
+	wordRepository := database.NewWordRepository(db)
 	wordService := v1.NewWordService(wordRepository)
 	wordHandler := handlers.NewWordHandler(wordService)
 
